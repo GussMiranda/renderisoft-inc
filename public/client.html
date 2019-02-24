@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+    <title>Cliente de Streaming</title>
+    <link rel="stylesheet" href="main.css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+   
+</head>
+<body>
+	<h1>Cliente de Streaming</h1>
+	<p>
+		Esta página recibe en tiempo real el streaming de la cámara web del usuario que genera la transmisión
+    </p>
+    <div class="containerStream">
+        <img id="streaming" >
+    </div>
+  
+    <div id="chat-container" class="card ">
+      
+        <div class="card-header " id= "userchat">
+            <input type="text" id = "username" placeholder="Usuario" class="form-control-plaintext ">
+        </div>
+           <div id="outpout" class="card-body">
+
+            </div>
+        <div class="card-body" id="actions">
+           
+            
+          </div>
+  
+
+
+   <div class="card-footer text-muted" >
+   <div class="input-group mb-3">
+    <input type="text" class="form-control"  id = "message"  placeholder="Escriba su Mensaje" aria-label="Recipient's username" aria-describedby="button-addon2">
+    <div class="input-group-append">
+      <button class="btn btn-info" type="button" id="send">Enviar</button>
+    </div>
+    </div>
+    </div>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+
+<script src="chat.js" ></script>
+
+	<script>
+		(function (d, io){
+			'use strict'
+			var io = io()
+			io.on('playstream', function (image){
+				d.querySelector('#streaming').src = image
+			})
+		})(document, io)
+	</script>
+</body>
+</html>

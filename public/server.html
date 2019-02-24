@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="main.css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    
+    <title>server Streaming</title>
+</head>
+<body>
+    <h1>server Streaming</h1>
+    <p>Servidor de video en tiempo real</p>
+  
+
+<div class="containerStream">
+    <video id ="video" autoplay></video>
+    <canvas id  = "canvas" width="650px" height="500px">
+        
+    </canvas>
+</div>
+
+<div id="chat-container" class="card ">
+    <form action="/chat" method="POST"> 
+        <div class="card-header " id= "userchat">
+            <input type="text" name= "username" id = "username" placeholder="Usuario" class="form-control-plaintext " >
+        </div>
+           <div id="outpout" class="card-body">
+
+            </div>
+        <div class="card-body" id="actions">
+           
+            
+          </div>
+  
+
+
+   <div class="card-footer text-muted" >
+   <div class="input-group mb-3">
+    <input type="text" class="form-control" name= "message" id = "message"  placeholder="Escriba su Mensaje" aria-label="Recipient's username" aria-describedby="button-addon2">
+    <div class="input-group-append">
+      <button class="btn btn-info" type="submit" id="send">Enviar</button>
+    </div>
+    </div>
+    </div>
+    </form>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+
+<script src="chat.js" ></script>
+
+    
+    <script>
+            (function(d,w, n, io){
+                'use strict'
+                 var   io = io(),
+                    startCamera = false,
+                    video = d.querySelector('#video'),
+                    canvas = d.querySelector('#canvas'),
+                    context = canvas.getContext('2d')
+                    n.streaming = (
+                        n.getUserMedia||
+                        n.webkitGetUserMedia||
+                        n.mozGetUserMedia||
+                        n.msGetUserMedia
+                 
+
+                    )
+                    n.streaming({
+                        video: true,
+                        audio : false
+                    }, function(stream){
+                        startCamera = true
+                        video.srcObject  = stream;
+                    },function(err){
+                        alert('Error al acceder a la camara web'+ err)
+                    })
+
+                    w.playVideo = (function (cb){
+				return w.requestAnimationFrame ||
+					w.webkitRequestAnimationFrame ||
+					w.mozRequestAnimationFrame ||
+					w.msRequestAnimationFrame ||
+					function (cb) {
+						w.setTimeout(cb, 1000/100)
+					}
+			})()
+			function streamVideo(context, canvas, video)
+			{
+				var outputStream = canvas.toDataURL('image/jpeg', .2)
+				context.drawImage(video, 0, 0)
+				if(startCamera)
+					io.emit('streaming', outputStream)
+				playVideo(function (){
+					streamVideo(context, canvas, video)
+				})
+			}
+			w.addEventListener('load', function (){
+				video.autoplay = true
+				video.style.display = 'none'
+				streamVideo(context, canvas, video)
+			})
+            })(document,window, navigator, io)
+    </script>
+</body>
+</html>

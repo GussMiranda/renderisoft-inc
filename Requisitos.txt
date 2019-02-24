@@ -1,0 +1,4 @@
+npm init --yes --- inicializa nodejs
+npm i express socket.io instalacion den soclet
+npm i nodemon -D instalacion nodemon 
+
